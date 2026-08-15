@@ -1,0 +1,56 @@
+<div class="layout">
+    <aside [class]="isExpandedSidebar() ? 'sidebar' : 'sidebar close'">
+      <div class="mt-3">
+          <div class="logo-details">
+            <img src="assets/images/angular-logo.png"
+            class="logo-image" />
+          </div>
+      </div>
+      <ul class="nav-links mt-5">
+          <sidebar-menu-item-component name="Dashboard" routerLink="dashboard" icon="@tui.chart-column" />
+      </ul>
+
+    </aside>
+
+    <main class="home-section">
+      <div class="top-navbar">
+        <div class="bx-menu mt-2" (click)="toggleSidebar()">
+          <tui-icon
+              icon="@tui.menu" class="text-black"
+          />
+
+        </div>
+        <ng-container>
+          <div class="header-user mt-2 cursor-pointer" (click)="toggleRightMenuDropdown()">
+              <div class="flex-1 min-w-0 text-base text-black truncate">
+                Biondi Bagasta Wiko Putra
+              </div>
+            <div tuiAvatar="@tui.user" appearance="primary-grayscale">
+              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" />
+            </div>
+          </div>
+          @if(isToggeledRightMenuDropdown() == true) {
+              <div class="dropdown-user">
+                  <div tuiAvatar="@tui.user" appearance="info" size="xl">
+
+                  </div>
+                  <div class="font-semibold text-base">
+                    Biondi Bagasta Wiko Putra
+                  </div>
+                  <div class="flex flex-col md:flex-row justify-around gap-5 mt-2">
+                    <button type="submit" tuiButton size="s">Profil</button>
+                    <button size="s" type="submit" tuiButton appearance="negative"
+                    (click)="logout()">Logout</button>
+                  </div>
+              </div>
+          }
+
+        </ng-container>
+      </div>
+      <div class="p-3">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+</div>
+
+

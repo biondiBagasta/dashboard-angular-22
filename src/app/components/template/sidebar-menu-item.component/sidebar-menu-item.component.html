@@ -1,0 +1,12 @@
+<li routerLinkActive="menu-active" routerLink="/admin/dashboard">
+    <a>
+        <tui-icon
+            [icon]="icon"
+        />
+    <span class="link_name">{{ name }}</span>
+    </a>
+    <ul class="sub-menu">
+    <li><a class="link_name" [routerLink]="'/admin/' + routerLink"
+        routerLinkActive="menu-active">{{ name }}</a></li>
+    </ul>
+</li>

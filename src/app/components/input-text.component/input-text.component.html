@@ -1,0 +1,13 @@
+<div class="w-full">
+  <tui-textfield [iconStart]="icon ? icon : undefined"
+  tuiTextfieldSize="m">
+    <label tuiLabel>{{ label }}</label>
+    <input
+      type="text"
+      [placeholder]="placeholder"
+      tuiInput
+      [formControl]="control"
+    />
+  </tui-textfield>
+  <tui-error [formControl]="control"></tui-error>
+</div>
