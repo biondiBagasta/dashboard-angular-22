@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-2 w-full">
+  <div class="text-base">
+    {{ label() }}
+  </div>
+  <quill-editor [modules]="modules" [formControl]="control()" />
+  <tui-error [formControl]="control()"></tui-error>
+</div>

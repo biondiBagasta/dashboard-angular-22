@@ -1,0 +1,27 @@
+<div class="w-full">
+  <tui-textfield
+    tuiTextfieldSize="m"
+    tuiChevron
+    [stringify]="stringify"
+  >
+    <label tuiLabel>{{ label() }}</label>
+    <input
+        tuiComboBox
+        [formControl]="control()"
+    />
+
+    <tui-data-list *tuiDropdown>
+        @for (item of items() | tuiFilterByInput; track item) {
+            <button
+                tuiOption
+                type="button"
+                [value]="item"
+            >
+                {{ item.name }}
+            </button>
+        }
+    </tui-data-list>
+  </tui-textfield>
+
+  <tui-error [formControl]="control()"></tui-error>
+</div>

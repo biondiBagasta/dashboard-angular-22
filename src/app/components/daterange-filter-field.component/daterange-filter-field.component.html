@@ -1,0 +1,10 @@
+<div class="w-full">
+  	<tui-textfield [tuiTextfieldCleaner]="false">
+      <label tuiLabel>Choose range</label>
+      <input
+          tuiInputDateRange
+          [formControl]="control()"
+      />
+      <tui-calendar-range *tuiDropdown />
+  </tui-textfield>
+</div>

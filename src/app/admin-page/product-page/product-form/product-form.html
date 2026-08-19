@@ -1,0 +1,38 @@
+<tui-loader [loading]="isLoadingSubmit()" [size]="'m'"
+  [overlay]="true" [textContent]="'Submitting in Progress....'">
+  <div class="w-full flex flex-col gap-4">
+    <div class="font-bold text-2xl">
+      {{ title() }}
+    </div>
+    <form [formGroup]="formGroup()" class="w-full flex flex-col gap-4">
+      <input-text-component label="Code" placeholder="Code"
+      [control]="formGroup().controls.code" />
+      <input-text-component label="Name" placeholder="Name"
+      [control]="formGroup().controls.name" />
+      <select-field-component label="Category" placeholder="Category"
+      [control]="formGroup().controls.category"
+      [items]="categoryList()" />
+      <quill-field-component label="Description" [control]="formGroup().controls.description" />
+      <input-currency-component label="Purchase Price" placeholder="Purchase Price"
+      [control]="formGroup().controls.purchase_price" />
+      <input-currency-component label="Selling Price" placeholder="Selling Price"
+      [control]="formGroup().controls.selling_price" />
+      <input-number-component label="Stock" placeholder="Stock"
+      [control]="formGroup().controls.stock" />
+      <input-percent-component label="Discount" placeholder="Discount"
+      [control]="formGroup().controls.discount" />
+      <input-file-component label="Image" [control]="formGroup().controls.image" />
+    </form>
+    <div class="flex flex-row justify-content-end gap-2">
+      <button tuiButton class="mr-2" type="submit" size="m"
+      iconStart="@tui.check"
+      (click)="onSubmit.emit()" [disabled]="!formGroup().valid">
+        Submit
+      </button>
+      <button tuiButton type="button" size="m" iconStart="@tui.x" appearance="warning"
+      (click)="onClose.emit()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</tui-loader>

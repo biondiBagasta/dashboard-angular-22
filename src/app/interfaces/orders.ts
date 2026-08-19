@@ -7,7 +7,7 @@ export interface OrdersData {
 	id: number;
 	order_number: string;
 	sub_total: number;
-	discount_total: number;
+	discount_total?: number;
 	grand_total: number;
 	created_by: number;
 	created_at: Date

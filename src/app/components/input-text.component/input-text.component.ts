@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TUI_VALIDATION_ERRORS, TuiError, TuiInput } from '@taiga-ui/core';
+import { TuiError, TuiInput } from '@taiga-ui/core';
 import { formValidationErrorProvider } from '../../../utils/utils';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'input-text-component',
   imports: [
     TuiInput,
     ReactiveFormsModule,
-    TuiError
+    TuiError,
   ],
   templateUrl: './input-text.component.html',
   styleUrl: './input-text.component.css',
@@ -19,11 +20,10 @@ import { formValidationErrorProvider } from '../../../utils/utils';
 })
 export class InputTextComponent {
 
-  @Input() label = "";
-  @Input() placeholder = "";
+  label = input.required<string>();
+  placeholder = input.required<string>();
 
-  @Input({ required: true })
-  control!: FormControl
+  control = input.required<FormControl<string | null>>()
 
-  @Input() icon = ""
+  icon = input("")
 }

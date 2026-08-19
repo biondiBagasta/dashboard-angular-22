@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
-@import './dashboard.css'
+@import './dashboard.css';
+@import 'quill/dist/quill.snow.css';
+
+.taiga-table {
+  inline-size: 100%;
+  overflow-x: auto;
+}
+
+.table-container {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}

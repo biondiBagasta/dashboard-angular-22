@@ -7,7 +7,10 @@
           </div>
       </div>
       <ul class="nav-links mt-5">
-          <sidebar-menu-item-component name="Dashboard" routerLink="dashboard" icon="@tui.chart-column" />
+        <sidebar-menu-item-component name="Dashboard" routerLink="dashboard" icon="@tui.chart-column" />
+        <sidebar-menu-item-component name="Product" routerLink="product"
+        icon="@tui.package-open" />
+        <sidebar-menu-item-component name="Restock" routerLink="restock" icon="@tui.package-plus" />
       </ul>
 
     </aside>
@@ -23,7 +26,7 @@
         <ng-container>
           <div class="header-user mt-2 cursor-pointer" (click)="toggleRightMenuDropdown()">
               <div class="flex-1 min-w-0 text-base text-black truncate">
-                Biondi Bagasta Wiko Putra
+                {{ authenticatedUser$()?.full_name }}
               </div>
             <div tuiAvatar="@tui.user" appearance="primary-grayscale">
               <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" />
@@ -35,11 +38,12 @@
 
                   </div>
                   <div class="font-semibold text-base">
-                    Biondi Bagasta Wiko Putra
+                    {{ authenticatedUser$()?.full_name }}
                   </div>
-                  <div class="flex flex-col md:flex-row justify-around gap-5 mt-2">
-                    <button type="submit" tuiButton size="s">Profil</button>
+                  <div class="w-full flex flex-col gap-2 mt-2">
+                    <button type="submit" tuiButton size="s" class="w-full">Profil</button>
                     <button size="s" type="submit" tuiButton appearance="negative"
+                    class="w-full"
                     (click)="logout()">Logout</button>
                   </div>
               </div>

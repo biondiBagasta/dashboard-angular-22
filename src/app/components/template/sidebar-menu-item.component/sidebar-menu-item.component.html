@@ -1,4 +1,5 @@
-<li routerLinkActive="menu-active" routerLink="/admin/dashboard">
+<li routerLinkActive="menu-active" [routerLink]="'/admin/' + routerLink"
+class="mb-2">
     <a>
         <tui-icon
             [icon]="icon"

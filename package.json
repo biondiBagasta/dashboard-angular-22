@@ -18,6 +18,9 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@maskito/angular": "^5.4.0",
+    "@maskito/core": "^5.4.0",
+    "@maskito/kit": "^5.4.0",
     "@taiga-ui/addon-commerce": "^5.19.0",
     "@taiga-ui/addon-doc": "^5.19.0",
     "@taiga-ui/addon-mobile": "^5.19.0",
@@ -28,6 +31,8 @@
     "@taiga-ui/kit": "^5.19.0",
     "@taiga-ui/layout": "^5.19.0",
     "less": "^4.8.1",
+    "ngx-quill": "^31.0.1",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

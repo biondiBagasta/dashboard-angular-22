@@ -1,0 +1,166 @@
+<div class="section">
+  <page-title-component title="Product" previousTitle="Dashboard" />
+
+  <div class="grid grid-cols-12 gap-6 mt-5">
+    <div class="col-span-12 md:col-span-8">
+      <div tuiCardLarge tuiAppearance="outline-grayscale">
+        <div class="text-base font-semibold">
+          Product Data
+        </div>
+        <div class="w-full flex flex-row justify-between items-center gap-4">
+          <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
+          (click)="openCreateDialog()">
+            Add
+          </button>
+
+          <div class="w-full md:w-75">
+            <input-search-component label="Search Data" placeholder="Press Enter to Search"
+            [control]="searchControl"
+            (onEnter)="search(0)"  />
+          </div>
+        </div>
+
+        <div class="w-full">
+          <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
+          [textContent]="'Loading the Data...'">
+            <div class="table-container">
+              <table tuiTable class="taiga-table mb-2">
+                <thead>
+                  <tr tuiThGroup>
+                    <th tuiTh>
+                      Image
+                    </th>
+                    <th tuiTh>
+                      Code
+                    </th>
+                    <th tuiTh>
+                      Name
+                    </th>
+                    <th tuiTh>
+                      Category
+                    </th>
+                    <th tuiTh>
+                      Description
+                    </th>
+                    <th tuiTh>
+                      Purchase Price
+                    </th>
+                    <th tuiTh>
+                      Selling Price
+                    </th>
+                    <th tuiTh>
+                      Stock
+                    </th>
+                    <th tuiTh>
+                      Discount
+                    </th>
+                    <th tuiTh>Action</th>
+                  </tr>
+                </thead>
+                <tbody tuiTbody>
+                  @for (item of paginationData$()?.data; track $index) {
+                    <tr>
+                      <td tuiTd>
+                        <div tuiAvatar="@tui.image" appearance="primary-grayscale" size="xl" [round]="false"
+                        (click)="openDetailImageDialog(item.image)">
+                          <img [src]="fileUrl + item.image" />
+                        </div>
+                      </td>
+                      <td tuiTd>
+                        {{ item.code }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.name }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.edges.category.name }}
+                      </td>
+                      <td tuiTd>
+                        <div [innerHTML]="item.description"></div>
+                      </td>
+                      <td tuiTd>
+                        {{ item.purchase_price | currency }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.selling_price }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.stock ?? 0 }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.discount ?? 0 }} %
+                      </td>
+                      <td tuiTd>
+                        <div class="flex flex-col md:flex-row gap-2">
+                          <button tuiIconButton type="button"
+                          iconStart="@tui.square-pen" appearance="info"
+                          (click)="openEditDialog(item)"
+                            size="s">
+                          </button>
+                          <button tuiIconButton
+                            type="button" iconStart="@tui.trash"
+                            size="s" appearance="negative"
+                            (click)="openDeleteDialog(item)">
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            @if(paginationData$()?.data!.length == 0) {
+              <div tuiNotification size="l">
+                No Item Data
+              </div>
+            }
+
+            <br/>
+            @if(paginationData$() != null) {
+              &nbsp;
+              <div class="flex flex-row items-center justify-between">
+                <tui-pagination [length]="paginationData$()!.paginate.total_page" [index]="0"
+                (indexChange)="search($event)"></tui-pagination>
+
+                <div class="text-base text-black">
+                  Page {{ paginationData$()?.paginate!.current_page }} of
+                  {{ paginationData$()?.paginate!.total_page }}, Show
+                  {{ paginationData$()?.paginate!.per_page }}
+                </div>
+              </div>
+            }
+          </tui-loader>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <app-category-section [(categoryList)]="categoryList$" />
+    </div>
+  </div>
+</div>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedCreateDialog">
+  <app-product-form [formGroup]="productForm" title="Create Prodcut" [isLoadingSubmit]="isLoadingSubmit$()"
+  [categoryList]="categorySelectList$()" (onClose)="closeCreateDialog()" (onSubmit)="createData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedEditDialog">
+  <app-product-form [formGroup]="productForm" title="Update Prodcut" [isLoadingSubmit]="isLoadingSubmit$()"
+  [categoryList]="categorySelectList$()" (onClose)="closeEditDialog()" (onSubmit)="updateData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedDeleteDialog">
+  <delete-dialog title="Delete Product Data" [description]="`Are you sure want to delete this <b>${selectedData$()?.name}</b> Product Data???`"
+  (onSubmit)="deleteData()" (onClose)="closeDeleteDialog()"
+  [isLoadingSubmit]="isLoadingSubmit$()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedDetailImageDialog">
+  <detail-image-dialog [imageUrl]="`/product/image/${selectedDetailImage$()}`" />
+</ng-template>

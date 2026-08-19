@@ -8,8 +8,8 @@ export interface ProductData {
   description: string;
   purchase_price: number
   selling_price: number
-  stock: number
-  discount: number
+  stock?: number
+  discount?: number
   category_id: number;
   edges: {
     category: CategoryData

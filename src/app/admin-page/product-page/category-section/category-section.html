@@ -1,0 +1,80 @@
+<div tuiCardLarge tuiAppearance="outline-grayscale">
+  <div class="text-base font-semibold">
+    Product Category
+  </div>
+  <div class="flex flex-row items-center gap-4">
+    <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
+    (click)="openCreateDialog()">
+      Add
+    </button>
+  </div>
+
+  <div class="w-full">
+    <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
+    [textContent]="'Loading the Data...'">
+      <div class="table-container">
+        <table tuiTable class="taiga-table mb-2">
+          <thead>
+            <tr tuiThGroup>
+              <th tuiTh>
+                Name
+              </th>
+              <th tuiTh>Action</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            @for (item of categoryList(); track $index) {
+              <tr>
+                <td tuiTd>
+                  {{ item.name }}
+                </td>
+                <td tuiTd>
+                  <div class="flex flex-col md:flex-row gap-2">
+                    <button tuiIconButton type="button"
+                    iconStart="@tui.square-pen" appearance="info"
+                    (click)="openEditDialog(item)"
+                      size="s">
+                    </button>
+                    <button tuiIconButton
+                      type="button" iconStart="@tui.trash"
+                      size="s" appearance="negative"
+                      (click)="openDeleteDialog(item)">
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if(categoryList().length == 0) {
+        <div tuiNotification size="l">
+          No Item Data
+        </div>
+      }
+    </tui-loader>
+  </div>
+</div>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedCreateDialog">
+  <app-category-form (onClose)="closeCreateDialog()" [formGroup]="categoryForm"
+  [(isLoadingSubmit)]="isLoadingSubmit$" title="Create Category" (onSubmit)="createData()" />
+</ng-template>
+
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedEditDialog">
+  <app-category-form (onClose)="closeEditDialog()" [formGroup]="categoryForm"
+  [(isLoadingSubmit)]="isLoadingSubmit$" title="Update Category" (onSubmit)="updateData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedDeleteDialog">
+  <delete-dialog title="Delete Category"
+  [(isLoadingSubmit)]="isLoadingSubmit$"
+  [description]="`Are you sure want to delete this <b>${selectedData$()?.name!}</b> Category Data???`"
+  (onClose)="closeDeleteDialog()"
+  (onSubmit)="deleteData()" />
+</ng-template>

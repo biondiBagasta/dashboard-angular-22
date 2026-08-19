@@ -1,0 +1,129 @@
+<div class="section">
+  <page-title-component title="Restock" previousTitle="Dashboard" />
+
+  <div class="grid grid-cols-12 gap-6 mt-5">
+    <div class="col-span-12 md:col-span-8">
+      <div tuiCardLarge tuiAppearance="outline-grayscale">
+        <div class="text-base font-semibold">
+          Product Data
+        </div>
+        <div class="w-full flex flex-row justify-between items-center gap-4">
+          <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
+          (click)="openCreateDialog()">
+            Add
+          </button>
+
+          <div class="w-full md:w-100 flex flex-row gap-4 items-center">
+            <daterange-filter-field-component label="Search by Date" [control]="searchDateRangeControl" />
+            <button tuiIconButton iconStart="@tui.search" (click)="search(0)"></button>
+          </div>
+        </div>
+
+        <div class="w-full">
+          <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
+          [textContent]="'Loading the Data...'">
+            <div class="table-container">
+              <table tuiTable class="taiga-table mb-2">
+                <thead>
+                  <tr tuiThGroup>
+                    <th tuiTh>
+                      Restock Number
+                    </th>
+                    <th tuiTh>
+                      Date
+                    </th>
+                    <th tuiTh>
+                      Supplier
+                    </th>
+                    <th tuiTh>
+                      Subtotal
+                    </th>
+                    <th tuiTh>
+                      Discounttotal
+                    </th>
+                    <th tuiTh>
+                      Grandtotal
+                    </th>
+                    <th tuiTh>
+                      Created By
+                    </th>
+                    <th tuiTh>
+                      Item List
+                    </th>
+                    <th tuiTh>Action</th>
+                  </tr>
+                </thead>
+                <tbody tuiTbody>
+                  @for (item of paginationData$()?.data; track $index) {
+                    <tr>
+                      <td tuiTd>
+                        {{ item.restock_number }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.restock_date | date }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.edges.supplier.name }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.sub_total | currency }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.discount_total }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.grand_total | currency }}
+                      </td>
+                      <td tuiTd>
+                        {{ item.edges.user.full_name }}
+                      </td>
+                      <td tuiTd>
+                        <div class="flex flex-col md:flex-row gap-2">
+                          <button tuiIconButton type="button"
+                          iconStart="@tui.square-pen" appearance="info"
+                          (click)="openEditDialog(item)"
+                            size="s">
+                          </button>
+                          <button tuiIconButton
+                            type="button" iconStart="@tui.trash"
+                            size="s" appearance="negative"
+                            (click)="openDeleteDialog(item)">
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            @if(paginationData$()?.data!.length == 0) {
+              <div tuiNotification size="l">
+                No Item Data
+              </div>
+            }
+
+            <br/>
+            @if(paginationData$() != null) {
+              &nbsp;
+              <div class="flex flex-row items-center justify-between">
+                <tui-pagination [length]="paginationData$()!.paginate.total_page" [index]="0"
+                (indexChange)="search($event)"></tui-pagination>
+
+                <div class="text-base text-black">
+                  Page {{ paginationData$()?.paginate!.current_page }} of
+                  {{ paginationData$()?.paginate!.total_page }}, Show
+                  {{ paginationData$()?.paginate!.per_page }}
+                </div>
+              </div>
+            }
+          </tui-loader>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <app-supplier-section [supplierList]="supplierList$()" />
+    </div>
+  </div>
+</div>

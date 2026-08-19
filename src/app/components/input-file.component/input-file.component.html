@@ -1,0 +1,25 @@
+<div class="w-full flex flex-col gap-2">
+  <div class="text-base">
+    {{ label() }}
+  </div>
+
+  <label tuiInputFiles>
+    <input
+      tuiInputFiles
+      type="file"
+      accept="image/*"
+      [formControl]="control()"
+    />
+  </label>
+
+  <tui-files>
+    @if (control().value; as file) {
+      <tui-file
+        tuiItem
+        [file]="file"
+      />
+    }
+  </tui-files>
+
+  <!-- <tui-error [formControl]="control()"></tui-error> -->
+</div>

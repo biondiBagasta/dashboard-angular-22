@@ -1,0 +1,11 @@
+<tui-textfield [iconStart]="'@tui.search'"
+  tuiTextfieldSize="m">
+    <label tuiLabel>{{ label() }}</label>
+    <input
+      type="text"
+      [placeholder]="placeholder()"
+      tuiInput
+      [formControl]="control()"
+      (keyup.enter)="onEnter.emit()"
+    />
+</tui-textfield>

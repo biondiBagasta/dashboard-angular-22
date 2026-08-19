@@ -5,7 +5,7 @@
         <img src="assets/images/angular-logo.png"
         class="mx-auto h-32 w-auto"/>
 
-        <form [formGroup]="loginForm" class="w-full flex flex-col gap-4">
+        <form [formGroup]="loginForm" class="w-full flex flex-col gap-6">
           <div class="flex flex-col gap-4 w-full">
             <input-text-component label="Username"
             [control]="loginForm.controls.username"
@@ -15,7 +15,8 @@
             <input-password-component label="Password"
             placeholder="Password" [control]="loginForm.controls.password" icon="@tui.key-round" />
 
-            <button tuiButton class="w-full" size="s">
+            <button tuiButton class="w-full" size="m" [disabled]="!loginForm.valid"
+            (click)="login()">
               Login
             </button>
           </div>

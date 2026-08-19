@@ -1,0 +1,12 @@
+<tui-loader [loading]="isLoadingSubmit()"
+  [size]="'m'" [overlay]="true" [textContent]="'Deleting in Progress....'">
+    <div class="font-bold text-2xl mb-5">
+      {{ title() }}
+    </div>
+    <div class="text-lg mb-5" [innerHTML]="description()">
+    </div>
+    <button class="mr-2" tuiButton type="button" (click)="onSubmit.emit()"
+    size="m" iconStart="@tui.check">Yes</button>
+    <button tuiButton type="button" size="m"
+    iconStart="@tui.x" appearance="warning" (click)="onClose.emit()">Cancel</button>
+</tui-loader>
