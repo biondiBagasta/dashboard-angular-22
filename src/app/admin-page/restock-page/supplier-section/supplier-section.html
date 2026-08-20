@@ -12,8 +12,8 @@
   <div class="w-full">
     <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
     [textContent]="'Loading the Data...'">
-      <div class="table-container">
-        <table tuiTable class="taiga-table mb-2">
+      <div class="w-full overflow-x-auto overflow-y-hidden">
+        <table tuiTable class="mb-2 min-w-full">
           <thead>
             <tr tuiThGroup>
               <th tuiTh>
@@ -46,7 +46,7 @@
                 <td tuiTd>
                   @if(item.active == 1) {
                     <div tuiBadge appearance="positive" tuiStatus>
-                      Aktive
+                      Active
                     </div>
                   } @else {
                     <div tuiBadge appearance="negative" tuiStatus>
@@ -86,14 +86,14 @@
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
   [(tuiDialog)]="isOpenedCreateDialog">
   <app-supplier-form (onClose)="closeCreateDialog()" [formGroup]="supplierForm"
-  [(isLoadingSubmit)]="isLoadingSubmit$" title="Create Supplier" (onSubmit)="createData()" />
+  [isLoadingSubmit]="isLoadingSubmit$()" title="Create Supplier" (onSubmit)="createData()" />
 </ng-template>
 
 
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
   [(tuiDialog)]="isOpenedEditDialog">
   <app-supplier-form (onClose)="closeEditDialog()" [formGroup]="supplierForm"
-  [(isLoadingSubmit)]="isLoadingSubmit$" title="Update Supplier" (onSubmit)="updateData()" />
+  [isLoadingSubmit]="isLoadingSubmit$()" title="Update Supplier" (onSubmit)="updateData()" />
 </ng-template>
 
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"

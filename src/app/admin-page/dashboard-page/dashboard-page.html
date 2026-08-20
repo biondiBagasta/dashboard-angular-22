@@ -1,1 +1,28 @@
-<p>dashboard-page works!</p>
+<div class="section">
+  <page-title-component title="Dashboard" />
+  <div class="grid grid-cols-12 gap-6 mt-5">
+    <div class="col-span-12 md:col-span-6">
+        <div
+            appearance="floating"
+            tuiCardLarge
+        >
+            <highcharts-chart
+            [options]="chartPerbandinganOptions"
+            style="width:100%;height:400px;display:block;">
+            </highcharts-chart>
+        </div>
+    </div>
+
+    <div class="col-span-12 md:col-span-6">
+        <div
+            appearance="floating"
+            tuiCardLarge
+        >
+            <highcharts-chart
+            [options]="chartPenjualanOptions"
+            style="width:100%;height:400px;display:block;">
+            </highcharts-chart>
+        </div>
+    </div>
+  </div>
+</div>

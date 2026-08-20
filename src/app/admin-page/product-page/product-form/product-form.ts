@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ControlsOf } from '../../../../utils/utils';
 import { ProductFormControls } from '../product-page';
@@ -32,10 +32,9 @@ import { SelectItem } from '../../../interfaces/select-item';
 })
 export class ProductForm {
   formGroup = input.required<FormGroup<ControlsOf<ProductFormControls>>>()
-  isLoadingSubmit = model.required<boolean>();
+  isLoadingSubmit = input.required<boolean>();
   onSubmit = output<void>()
   onClose = output<void>();
   title = input.required<string>()
   categoryList = input.required<SelectItem[]>()
-
 }

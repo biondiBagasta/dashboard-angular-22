@@ -8,15 +8,18 @@ import { AuthenticatedSignal } from '../../signals/authenticated-signal';
 import { RestockService } from '../../services/restock.service';
 import { SelectItem } from '../../interfaces/select-item';
 import { RestockItemsBodyData, RestockPaginate, RestocksData, SelectedRestockProductData } from '../../interfaces/restocks';
-import { ControlsOf, deformatToNumber, formatCurrencyMaskito, formatPercentMaskito } from '../../../utils/utils';
+import { baseUrl, ControlsOf, deformatToNumber, formatCurrencyMaskito, formatPercentMaskito } from '../../../utils/utils';
 import { catchError, Subscription, switchMap, tap } from 'rxjs';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk/date-time';
 import { UtilsService } from '../../services/utils.service';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiPagination } from '@taiga-ui/kit';
-import { TuiButton, TuiLoader, TuiNotification } from '@taiga-ui/core';
+import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
+import { TuiAppearance, TuiButton, TuiDialog, TuiLoader, TuiNotification } from '@taiga-ui/core';
 import { DaterangeFilterFieldComponent } from '../../components/daterange-filter-field.component/daterange-filter-field.component';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DeleteDialog } from '../../components/delete-dialog/delete-dialog';
+import { RestockForm } from './restock-form/restock-form';
+import { ConfirmationDialog } from '../../components/confirmation-dialog/confirmation-dialog';
 
 export interface RestockFormControls {
   supplier: SelectItem | null;
@@ -37,8 +40,14 @@ export interface RestockFormControls {
     DaterangeFilterFieldComponent,
     TuiLoader,
     DatePipe,
-    CurrencyPipe
-],
+    CurrencyPipe,
+    TuiDialog,
+    TuiAvatar,
+    DeleteDialog,
+    RestockForm,
+    TuiAppearance,
+    ConfirmationDialog
+  ],
   templateUrl: './restock-page.html',
   styleUrl: './restock-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -53,11 +62,20 @@ export class RestockPage {
   authetenticatedUser$ = computed(() => this.authenticatedSignal.authenticatedUser$())
 
   supplierList$ = signal<SupplierData[]>([]);
+
+  supplierSelectList$ = computed<SelectItem[]>(() =>
+    this.supplierList$().map(data => ({
+      id: data.id,
+      name: data.name,
+    }))
+  );
   selectedItemsList$ = signal<SelectedRestockProductData[]>([])
 
   isOpenedCreateDialog = false;
   isOpenedEditDialog = false;
   isOpenedDeleteDialog = false;
+
+  isOpenedDetailDialog = false;
 
   paginationData$ = signal<RestockPaginate | null>(null)
   selectedData$ = signal<RestocksData | null>(null)
@@ -74,6 +92,8 @@ export class RestockPage {
 
   isLoadingTable$ = signal(true)
   isLoadingSubmit$ = signal(false);
+
+  fileUrl = `${baseUrl}/files/product/image/`
 
   ngOnInit(): void {
     this.search(0)
@@ -107,11 +127,13 @@ export class RestockPage {
   }
 
   refresh(): void {
-    this.searchDateRangeControl.reset();
+    // this.searchDateRangeControl.reset();
     this.search(0);
   }
 
   openCreateDialog(): void {
+    this.selectedItemsList$.set([])
+    this.restockForm.reset();
     this.isOpenedCreateDialog = true;
   }
 
@@ -120,6 +142,7 @@ export class RestockPage {
   }
 
   createData(): void {
+    this.closeConfirmationDialogCreate()
     this.isLoadingSubmit$.set(true);
 
     const supplier = this.restockForm.controls.supplier.value!;
@@ -167,9 +190,11 @@ export class RestockPage {
   openEditDialog(data: RestocksData): void {
     this.selectedData$.set(data);
 
+    const parsedRestockDate = new Date(data.restock_date)
+
     this.restockForm.patchValue({
       supplier: data.edges.supplier,
-      restock_date: new TuiDay(data.restock_date.getFullYear(), data.restock_date.getMonth() + 1, data.restock_date.getDay()),
+      restock_date: new TuiDay(parsedRestockDate.getFullYear(), parsedRestockDate.getMonth(), parsedRestockDate.getDay()),
       note: data.note,
     });
 
@@ -179,7 +204,7 @@ export class RestockPage {
         product: d.edges.product,
         quantity: d.quantity,
         purchase_price: formatCurrencyMaskito(d.purchase_price),
-        discount: formatPercentMaskito(d.discount),
+        discount: formatPercentMaskito(d.discount ?? 0),
         sub_total: formatCurrencyMaskito(d.sub_total)
       }
 
@@ -196,6 +221,7 @@ export class RestockPage {
   }
 
   updateData(): void {
+    this.closeConfirmationDialogEdit();
     this.isLoadingSubmit$.set(true);
 
     const supplier = this.restockForm.controls.supplier.value!;
@@ -276,5 +302,34 @@ export class RestockPage {
     ).subscribe()
 
     this.subscription.add(deleteSubscription);
+  }
+
+  openDetailDialog(data: RestocksData): void {
+    this.selectedData$.set(data);
+    this.isOpenedDetailDialog = true;
+  }
+
+  closeDetailDialog(): void {
+    this.isOpenedDetailDialog = false;
+  }
+
+  // Confirmation Logic
+  isOpenedConfirmationDialogCreate = false;
+  isOpenedConfirmationDialogEdit = false;
+
+  openConfirmationDialogCreate(): void {
+    this.isOpenedConfirmationDialogCreate = true;
+  }
+
+  closeConfirmationDialogCreate(): void {
+    this.isOpenedConfirmationDialogCreate = false
+  }
+
+  openConfirmationDialogEdit(): void {
+    this.isOpenedConfirmationDialogEdit = true;
+  }
+
+  closeConfirmationDialogEdit(): void {
+    this.isOpenedConfirmationDialogEdit = false
   }
 }

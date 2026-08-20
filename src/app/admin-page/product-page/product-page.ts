@@ -13,7 +13,7 @@ import { FilesService } from '../../services/files.service';
 import { FileResponse } from '../../interfaces/file-response';
 import { TuiAppearance, TuiButton, TuiDialog, TuiLoader, TuiNotification } from '@taiga-ui/core';
 import { CurrencyPipe } from '@angular/common';
-import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
+import { TuiAvatar, TuiBadge, TuiPagination, TuiStatus } from '@taiga-ui/kit';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { InputSearchComponent } from '../../components/input-search.component/input-search.component';
 import { DeleteDialog } from '../../components/delete-dialog/delete-dialog';
@@ -51,8 +51,10 @@ export interface ProductFormControls {
     DeleteDialog,
     TuiDialog,
     ProductForm,
-    DetailImageDialog
-],
+    DetailImageDialog,
+    TuiBadge,
+    TuiStatus
+  ],
   templateUrl: './product-page.html',
   styleUrl: './product-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -74,9 +76,9 @@ export class ProductPage {
   categoryList$ = signal<CategoryData[]>([])
 
   categorySelectList$ = computed<SelectItem[]>(() =>
-    this.categoryList$().map(category => ({
-      id: category.id,
-      name: category.name,
+    this.categoryList$().map(data => ({
+      id: data.id,
+      name: data.name,
     }))
   );
 
@@ -161,50 +163,57 @@ export class ProductPage {
     const discount = deformatToNumber(this.productForm.controls.discount.value!);
     const category = this.productForm.controls.category.value!;
 
-    const image = this.productForm.controls.image.value!;
+    const image = this.productForm.controls.image.value;
 
-    const formData = new FormData();
-    formData.append("product_image", image);
+    if(image == null) {
+      const errorSubscription = this.utilsService
+      .showErrorAlert("ERROR", "Image shouldn't be empty!!!").subscribe();
 
-    const createSubscription = this.filesService.uploadProductImage(formData).pipe(
-      retry(3),
-      switchMap(fileResponse => {
-        return this.productService.create({
-          code,
-          name,
-          description,
-          purchase_price,
-          selling_price,
-          stock,
-          discount,
-          category_id: category.id,
-          image: fileResponse.file_name
-        }).pipe(
-          switchMap(data => {
-            this.isLoadingSubmit$.set(false);
+      this.subscription.add(errorSubscription)
+    } else {
+      const formData = new FormData();
+      formData.append("product_image", image);
 
-            if(data.success) {
-              this.closeCreateDialog();
-              this.refresh();
+      const createSubscription = this.filesService.uploadProductImage(formData).pipe(
+        retry(3),
+        switchMap(fileResponse => {
+          return this.productService.create({
+            code,
+            name,
+            description,
+            purchase_price,
+            selling_price,
+            stock,
+            discount,
+            category_id: category.id,
+            image: fileResponse.file_name
+          }).pipe(
+            switchMap(data => {
+              this.isLoadingSubmit$.set(false);
 
-              return this.utilsService.showInfoAlert("CREATE", data.message)
-            } else {
-              return this.utilsService.showErrorAlert("ERROR", data.message);
-            }
-          }),
-          catchError((e) => {
-            this.isLoadingSubmit$.set(false);
-            return this.utilsService.showErrorHttpMessageAlert(e);
-          }),
-        )
-      }),
-      catchError((e) => {
-        this.isLoadingSubmit$.set(false);
-        return this.utilsService.showErrorHttpMessageAlert(e);
-      })
-    ).subscribe();
+              if(data.success) {
+                this.closeCreateDialog();
+                this.refresh();
 
-    this.subscription.add(createSubscription);
+                return this.utilsService.showInfoAlert("CREATE", data.message)
+              } else {
+                return this.utilsService.showErrorAlert("ERROR", data.message);
+              }
+            }),
+            catchError((e) => {
+              this.isLoadingSubmit$.set(false);
+              return this.utilsService.showErrorHttpMessageAlert(e);
+            }),
+          )
+        }),
+        catchError((e) => {
+          this.isLoadingSubmit$.set(false);
+          return this.utilsService.showErrorHttpMessageAlert(e);
+        })
+      ).subscribe();
+
+      this.subscription.add(createSubscription);
+    }
   }
 
   openEditDialog(data: ProductData): void {

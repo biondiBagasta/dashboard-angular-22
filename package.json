@@ -30,8 +30,11 @@
     "@taiga-ui/icons": "^5.19.0",
     "@taiga-ui/kit": "^5.19.0",
     "@taiga-ui/layout": "^5.19.0",
+    "highcharts": "^13.0.1",
+    "highcharts-angular": "^5.4.1",
     "less": "^4.8.1",
     "ngx-quill": "^31.0.1",
+    "ngx-socket-io": "^4.11.1",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

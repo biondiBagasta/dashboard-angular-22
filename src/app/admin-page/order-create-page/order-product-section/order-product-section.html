@@ -1,0 +1,72 @@
+<div tuiCardLarge tuiAppearance="outline-grayscale">
+  <div class="text-base font-semibold">
+    Select Ordered Product
+  </div>
+  <div class="w-full flex flex-col gap-4">
+    <input-search-component label="Search Product" [control]="searchControl"
+    placeholder="Press Enter to Search." />
+
+    <tui-loader [loading]="isLoadingTable$()" [size]="'m'"
+      [overlay]="true" [textContent]="'Loading Product Data...'">
+      <div class="w-full overflow-x-auto overflow-y-hidden">
+        <table tuiTable class="mb-2 min-w-250">
+          <thead>
+            <tr tuiThGroup>
+              <th tuiTh>
+                Selected
+              </th>
+              <th tuiTh>
+                Image
+              </th>
+              <th tuiTh>
+                Code
+              </th>
+              <th tuiTh>
+                Name
+              </th>
+              <th tuiTh>
+                Category
+              </th>
+              <th tuiTh>
+                Purchase Price
+              </th>
+              <th tuiTh>
+                Stock
+              </th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            @for (item of productPaginationData$()?.data; track $index) {
+              <tr>
+                <td tuiTd (click)="selectProductItem(item)">
+                  <input tuiCheckbox type="checkbox" size="m" [checked]="checkIfProductIsAlreadySelected(item.id)" />
+                </td>
+                <td tuiTd>
+                  <div tuiAvatar="@tui.image" appearance="primary-grayscale" size="m" [round]="false"
+                  >
+                    <img [src]="fileUrl + item.image" />
+                  </div>
+                </td>
+                <td tuiTd>
+                  {{ item.code }}
+                </td>
+                <td tuiTd>
+                  {{ item.name }}
+                </td>
+                <td tuiTd>
+                  {{ item.edges.category.name }}
+                </td>
+                <td tuiTd>
+                  {{ item.purchase_price  | currency : "Rp. " : "symbol": "1.0-0" }}
+                </td>
+                <td tuiTd>
+                  {{ item.stock ?? 0 }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </tui-loader>
+  </div>
+</div>

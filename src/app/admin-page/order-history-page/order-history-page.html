@@ -1,0 +1,167 @@
+<div class="section">
+  <page-title-component title="Order History" previousTitle="Dashboard" />
+
+  <div tuiCardLarge tuiAppearance="outline-grayscale">
+    <div class="w-full flex flex-col md:flex-row gap-2 md:gap-4 items-center">
+      <div class="w-100">
+        <daterange-filter-field-component label="Search by Date" [control]="searchDateRangeControl" />
+      </div>
+      <button tuiIconButton type="button"
+      iconStart="@tui.search"
+      (click)="search(0)"
+        size="m">
+      </button>
+    </div>
+
+    <div class="w-full">
+      <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
+      [textContent]="'Loading the Data...'">
+        <div class="w-full overflow-x-auto overflow-y-hidden">
+          <table tuiTable class="mb-2 min-w-full">
+            <thead>
+              <tr tuiThGroup>
+                <th tuiTh>
+                  Order Number
+                </th>
+                <th tuiTh>
+                  Date
+                </th>
+                <th tuiTh>
+                  Subtotal
+                </th>
+                <th tuiTh>
+                  Discounttotal
+                </th>
+                <th tuiTh>
+                  Grandtotal
+                </th>
+                <th tuiTh>
+                  Created By
+                </th>
+                <th tuiTh>
+                  Item List
+                </th>
+              </tr>
+            </thead>
+            <tbody tuiTbody>
+              @for (item of paginationData$()?.data; track $index) {
+                <tr>
+                  <td tuiTd>
+                    {{ item.order_number }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.created_at | date : 'fullDate' }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.sub_total | currency : "Rp. " : "symbol": "1.0-0" }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.discount_total ?? 0 | currency : "Rp. " : "symbol": "1.0-0" }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.grand_total | currency : "Rp. " : "symbol": "1.0-0" }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.edges.user.full_name }}
+                  </td>
+                  <td tuiTd>
+                    <button tuiButton iconStart="@tui.eye" appearance="secondary-grayscale" size="s"
+                    (click)="openDetailDialog(item)">
+                      Item List
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if(paginationData$()?.data!.length == 0) {
+          <div tuiNotification size="l">
+            No Item Data
+          </div>
+        }
+
+        <br/>
+        @if(paginationData$() != null) {
+          &nbsp;
+          <div class="flex flex-row items-center justify-between">
+            <tui-pagination [length]="paginationData$()!.paginate.total_page" [index]="0"
+            (indexChange)="search($event)"></tui-pagination>
+
+            <div class="text-base text-black">
+              Page {{ paginationData$()?.paginate!.current_page }} of
+              {{ paginationData$()?.paginate!.total_page }}, Show
+              {{ paginationData$()?.paginate!.per_page }}
+            </div>
+          </div>
+        }
+      </tui-loader>
+    </div>
+  </div>
+</div>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedDetailDialog">
+  <div class="text-base font-semibold mb-4">
+    Detail Order Items from Order on {{ selectedData$()?.created_at | date : 'fullDate' }}
+  </div>
+
+  <div class="table-container">
+    <table tuiTable class="taiga-table mb-2">
+      <thead>
+        <tr tuiThGroup>
+          <th tuiTh>
+            Image
+          </th>
+          <th tuiTh>
+            Name
+          </th>
+          <th tuiTh>
+            Category
+          </th>
+          <th tuiTh>
+            Selling Price
+          </th>
+          <th tuiTh>
+            Discount
+          </th>
+          <th tuiTh>
+            Qty
+          </th>
+          <th tuiTh>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody tuiTbody>
+        @for (item of selectedData$()!.edges.order_items; track $index) {
+          <tr>
+            <td tuiTd>
+              <div tuiAvatar="@tui.image" appearance="primary-grayscale" size="m" [round]="false"
+              >
+                <img [src]="fileUrl + item.edges.product.image" />
+              </div>
+            </td>
+            <td tuiTd>
+              {{ item.edges.product.name }}
+            </td>
+            <td tuiTd>
+              {{ item.edges.product.edges.category.name }}
+            </td>
+            <td tuiTd>
+              {{ item.selling_price | currency : "Rp. " : "symbol": "1.0-0" }}
+            </td>
+            <td tuiTd>
+              {{ item.discount }} %
+            </td>
+            <td tuiTd>
+              {{ item.quantity }}
+            </td>
+            <td tuiTd>
+              {{ item.sub_total | currency : "Rp. " : "symbol": "1.0-0" }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</ng-template>

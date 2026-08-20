@@ -1,0 +1,108 @@
+<div class="section">
+  <page-title-component title="Create Order" previousTitle="Dashboard" />
+
+  <div class="grid grid-cols-12 gap-6 mt-5">
+    <div class="col-span-12 md:col-span-8">
+      <div tuiCardLarge appearance="outline-grayscale">
+        <div class="w-full flex flex-col gap-4">
+          <div class="text-base font-semibold">
+            Ordered Product
+          </div>
+
+          <div class="w-full overflow-x-auto overflow-y-hidden">
+            <table tuiTable class="mb-2 min-w-full">
+              <thead>
+                <tr tuiThGroup>
+                  <th tuiTh>Name</th>
+                  <th tuiTh>Price</th>
+                  <th tuiTh>Qty</th>
+                  <th tuiTh>Discount</th>
+                  <th tuiTh>Subtotal</th>
+                </tr>
+              </thead>
+
+              <tbody tuiTbody>
+                @for (item of selectedItemList$(); track $index; let i = $index) {
+                  <tr>
+
+                    <td tuiTd>
+                      {{ item.product.name }}
+                    </td>
+
+                    <td tuiTd>
+                      {{ item.selling_price }}
+                    </td>
+
+                    <td tuiTd>
+                      <div class="flex flex-row gap-2 items-center">
+                        <button
+                          tuiIconButton
+                          size="s"
+                          iconStart="@tui.minus"
+                          appearance="negative"
+                          (click)="decrementQty(i)"
+                        ></button>
+
+                        <div class="font-semibold">
+                          {{ item.quantity }}
+                        </div>
+
+                        <button
+                          tuiIconButton
+                          size="s"
+                          iconStart="@tui.plus"
+                          appearance="positive"
+                          (click)="incrementQty(i)"
+                        ></button>
+                      </div>
+                    </td>
+
+                    <td tuiTd>
+                      {{ item.discount }}%
+                    </td>
+
+                    <td tuiTd>
+                      <div class="text-base font-semibold">
+                        {{ item.sub_total }}
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          @if(selectedItemList$().length == 0) {
+            <div tuiNotification size="l">
+              No Selected Item.
+            </div>
+          }
+
+          <div class="w-full flex flex-row justify-end gap-4">
+            <div class="text-lg">Total : </div>
+            <div class="text-lg font-bold">
+              {{ calculateSubtotal() }}
+            </div>
+          </div>
+
+          @if(selectedItemList$().length > 0) {
+            <button tuiButton class="w-full" size="m" (click)="openConfirmationDialog()" [loading]="isLoadingSubmit$()">
+              Proceed Checkout
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <app-order-product-section [(selectedItemList)]="selectedItemList$" />
+    </div>
+  </div>
+</div>
+
+<ng-template [tuiDialogOptions]="{ size: 's', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedConfirmationDialog">
+  <confirmation-dialog title="Confirm Proceed Checkout"
+  message="Are you sure all of this data was correct?"
+  (onCancel)="closeConfirmationDialog()" (onSubmit)="proceedCheckout()" />
+</ng-template>

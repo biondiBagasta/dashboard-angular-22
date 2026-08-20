@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ApplicationRef, Component, computed, inject, signal } from '@angular/core';
 import { AuthenticatedSignal } from '../signals/authenticated-signal';
 import { Router, RouterOutlet } from '@angular/router';
 import { catchError, Subscription, tap } from 'rxjs';
@@ -9,6 +9,7 @@ import { AuthService } from '../services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-admin-page',
@@ -35,7 +36,22 @@ export class AdminPage {
   utilsService = inject(UtilsService)
   localStorageService = inject(LocalStorageService);
 
+  socket = inject(Socket)
+  appRef = inject(ApplicationRef)
+
+  initializeSocket(): void {
+    const socketSubscription = this.socket.fromEvent<string>("notification").subscribe(data => {
+      console.log(data);
+      this.appRef.tick()
+    });
+
+    this.subscription.add(socketSubscription);
+
+    // Emit Events
+  }
+
   ngOnInit(): void {
+    this.initializeSocket()
     this.initialize();
   }
 

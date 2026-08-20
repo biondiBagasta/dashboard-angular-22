@@ -1,0 +1,21 @@
+<div class="w-full flex flex-col items-center gap-6">
+  <div tuiAvatar="@tui.octagon-alert"
+  [style.--tui-stroke-width.px]="5"
+  size="xxl" appearance="negative"></div>
+  <div class="text-lg font-semibold">
+    {{ title() }}
+  </div>
+  <div class="text-base text-center">
+    {{ message() }}
+  </div>
+  <div class="w-full flex flex-row justify-center gap-4">
+    <button tuiButton appearance="warning" (click)="onCancel.emit()" size="m"
+    iconStart="@tui.x">
+      Cancel
+    </button>
+    <button tuiButton appearance="primary" (click)="onSubmit.emit()" size="m"
+    iconStart="@tui.check">
+      Yes
+    </button>
+  </div>
+</div>

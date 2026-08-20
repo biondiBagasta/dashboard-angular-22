@@ -12,8 +12,8 @@
   <div class="w-full">
     <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
     [textContent]="'Loading the Data...'">
-      <div class="table-container">
-        <table tuiTable class="taiga-table mb-2">
+      <div class="w-full overflow-x-auto overflow-y-hidden">
+        <table tuiTable class="mb-2 min-w-full">
           <thead>
             <tr tuiThGroup>
               <th tuiTh>
@@ -60,14 +60,14 @@
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
   [(tuiDialog)]="isOpenedCreateDialog">
   <app-category-form (onClose)="closeCreateDialog()" [formGroup]="categoryForm"
-  [(isLoadingSubmit)]="isLoadingSubmit$" title="Create Category" (onSubmit)="createData()" />
+  [isLoadingSubmit]="isLoadingSubmit$()" title="Create Category" (onSubmit)="createData()" />
 </ng-template>
 
 
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
   [(tuiDialog)]="isOpenedEditDialog">
   <app-category-form (onClose)="closeEditDialog()" [formGroup]="categoryForm"
-  [(isLoadingSubmit)]="isLoadingSubmit$" title="Update Category" (onSubmit)="updateData()" />
+  [isLoadingSubmit]="isLoadingSubmit$()" title="Update Category" (onSubmit)="updateData()" />
 </ng-template>
 
 <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"

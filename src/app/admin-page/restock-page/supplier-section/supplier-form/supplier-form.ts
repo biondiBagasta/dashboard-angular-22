@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TuiButton, TuiLoader } from '@taiga-ui/core';
 import { InputTextComponent } from '../../../../components/input-text.component/input-text.component';
@@ -23,7 +23,7 @@ import { ToggleFieldComponent } from "../../../../components/toggle-field.compon
 })
 export class SupplierForm {
   formGroup = input.required<FormGroup<ControlsOf<SupplierFormControls>>>()
-  isLoadingSubmit = model.required<boolean>();
+  isLoadingSubmit = input.required<boolean>();
   onSubmit = output<void>()
   onClose = output<void>();
   title = input.required<string>()

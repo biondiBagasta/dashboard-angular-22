@@ -49,6 +49,14 @@ export const routes: Routes = [
         loadComponent: () => import("./admin-page/restock-page/restock-page").then((m) => m.RestockPage)
       },
       {
+        path: "order-history",
+        loadComponent: () => import("./admin-page/order-history-page/order-history-page").then((m) => m.OrderHistoryPage)
+      },
+      {
+        path: "order-create",
+        loadComponent: () => import("./admin-page/order-create-page/order-create-page").then((m) => m.OrderCreatePage)
+      },
+      {
         path: "",
         redirectTo: "dashboard",
         pathMatch: "full"

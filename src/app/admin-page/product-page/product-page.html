@@ -7,7 +7,7 @@
         <div class="text-base font-semibold">
           Product Data
         </div>
-        <div class="w-full flex flex-row justify-between items-center gap-4">
+        <div class="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
           (click)="openCreateDialog()">
             Add
@@ -23,8 +23,8 @@
         <div class="w-full">
           <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
           [textContent]="'Loading the Data...'">
-            <div class="table-container">
-              <table tuiTable class="taiga-table mb-2">
+            <div class="w-full overflow-x-auto overflow-y-hidden">
+              <table tuiTable class="mb-2 min-w-300">
                 <thead>
                   <tr tuiThGroup>
                     <th tuiTh>
@@ -79,13 +79,19 @@
                         <div [innerHTML]="item.description"></div>
                       </td>
                       <td tuiTd>
-                        {{ item.purchase_price | currency }}
+                        {{ item.purchase_price | currency : "Rp. " : "symbol": "1.0-0" }}
                       </td>
                       <td tuiTd>
-                        {{ item.selling_price }}
+                        {{ item.selling_price | currency : "Rp. " : "symbol": "1.0-0" }}
                       </td>
                       <td tuiTd>
-                        {{ item.stock ?? 0 }}
+                        @if(item.stock) {
+                          {{ item.stock }}
+                        } @else {
+                          <div tuiBadge appearance="negative" tuiStatus>
+                            Out of Stock
+                          </div>
+                        }
                       </td>
                       <td tuiTd>
                         {{ item.discount ?? 0 }} %

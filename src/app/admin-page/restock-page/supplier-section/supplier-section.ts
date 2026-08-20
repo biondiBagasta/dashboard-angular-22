@@ -66,7 +66,6 @@ export class SupplierSection {
   selectedData$ = signal<SupplierData | null>(null)
 
   ngOnInit(): void {
-    this.supplierForm.controls
     this.initialize();
   }
 

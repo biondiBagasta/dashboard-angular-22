@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiIcon } from '@taiga-ui/core';
 
@@ -13,12 +13,9 @@ import { TuiIcon } from '@taiga-ui/core';
   styleUrl: './sidebar-menu-item.component.css',
 })
 export class SidebarMenuItemComponent {
-  @Input({ required: true })
-  icon!: string;
+  icon = input.required<string>()
 
-  @Input({ required: true })
-  name!: string
+  name = input.required<string>()
 
-  @Input({ required: true })
-  routerLink!: string
+  routerLink = input.required<string>()
 }

@@ -1,13 +1,14 @@
-<li routerLinkActive="menu-active" [routerLink]="'/admin/' + routerLink"
+<li routerLinkActive="menu-active" [routerLink]="'/admin/' + routerLink()"
 class="mb-2">
     <a>
-        <tui-icon
-            [icon]="icon"
-        />
-    <span class="link_name">{{ name }}</span>
+      <tui-icon
+          [icon]="icon()"
+      />
+    <span class="link_name">{{ name() }}</span>
     </a>
     <ul class="sub-menu">
-    <li><a class="link_name" [routerLink]="'/admin/' + routerLink"
-        routerLinkActive="menu-active">{{ name }}</a></li>
+    <li>
+      <a class="link_name" [routerLink]="'/admin/' + routerLink()"
+        >{{ name() }}</a></li>
     </ul>
 </li>

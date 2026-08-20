@@ -5,25 +5,29 @@
     <div class="col-span-12 md:col-span-8">
       <div tuiCardLarge tuiAppearance="outline-grayscale">
         <div class="text-base font-semibold">
-          Product Data
+          Restock Data
         </div>
-        <div class="w-full flex flex-row justify-between items-center gap-4">
+        <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
           (click)="openCreateDialog()">
             Add
           </button>
 
-          <div class="w-full md:w-100 flex flex-row gap-4 items-center">
-            <daterange-filter-field-component label="Search by Date" [control]="searchDateRangeControl" />
-            <button tuiIconButton iconStart="@tui.search" (click)="search(0)"></button>
+          <div class="w-full flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-end">
+            <div class="w-100">
+              <daterange-filter-field-component label="Search by Date" [control]="searchDateRangeControl" />
+            </div>
+            <button tuiIconButton iconStart="@tui.search"
+            size="m"
+            (click)="search(0)"></button>
           </div>
         </div>
 
         <div class="w-full">
           <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
           [textContent]="'Loading the Data...'">
-            <div class="table-container">
-              <table tuiTable class="taiga-table mb-2">
+            <div class="w-full overflow-x-auto overflow-y-hidden">
+              <table tuiTable class="mb-2 min-w-full">
                 <thead>
                   <tr tuiThGroup>
                     <th tuiTh>
@@ -60,22 +64,28 @@
                         {{ item.restock_number }}
                       </td>
                       <td tuiTd>
-                        {{ item.restock_date | date }}
+                        {{ item.restock_date | date : 'fullDate' }}
                       </td>
                       <td tuiTd>
                         {{ item.edges.supplier.name }}
                       </td>
                       <td tuiTd>
-                        {{ item.sub_total | currency }}
+                        {{ item.sub_total | currency : "Rp. " : "symbol": "1.0-0" }}
                       </td>
                       <td tuiTd>
-                        {{ item.discount_total }}
+                        {{ item.discount_total ?? 0 | currency : "Rp. " : "symbol": "1.0-0" }}
                       </td>
                       <td tuiTd>
-                        {{ item.grand_total | currency }}
+                        {{ item.grand_total | currency : "Rp. " : "symbol": "1.0-0" }}
                       </td>
                       <td tuiTd>
                         {{ item.edges.user.full_name }}
+                      </td>
+                      <td tuiTd>
+                        <button tuiButton iconStart="@tui.eye" appearance="secondary-grayscale" size="s"
+                        (click)="openDetailDialog(item)">
+                          Item List
+                        </button>
                       </td>
                       <td tuiTd>
                         <div class="flex flex-col md:flex-row gap-2">
@@ -123,7 +133,111 @@
     </div>
 
     <div class="col-span-12 md:col-span-4">
-      <app-supplier-section [supplierList]="supplierList$()" />
+      <app-supplier-section [(supplierList)]="supplierList$" />
     </div>
   </div>
 </div>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedCreateDialog">
+  <app-restock-form [formGroup]="restockForm" [isLoadingSubmit]="isLoadingSubmit$()" [(selectedItemList)]="selectedItemsList$"
+  title="Create Restock Data" [supplierSelectList]="supplierSelectList$()"
+  (onSubmit)="openConfirmationDialogCreate()"
+  (onClose)="closeCreateDialog()"/>
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 's', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedConfirmationDialogCreate">
+  <confirmation-dialog title="Confirm Create Restock Data" message="Are you sure all of this data was correct?"
+  (onCancel)="closeConfirmationDialogCreate()" (onSubmit)="createData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedEditDialog">
+  <app-restock-form [formGroup]="restockForm"
+  [isLoadingSubmit]="isLoadingSubmit$()" [(selectedItemList)]="selectedItemsList$"
+  title="Edit Restock Data" [supplierSelectList]="supplierSelectList$()"
+  (onSubmit)="openConfirmationDialogEdit()"
+  (onClose)="closeEditDialog()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 's', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedConfirmationDialogEdit">
+  <confirmation-dialog title="Confirm Update Restock Data"
+  message="Are you sure all of this data was correct?"
+  (onCancel)="closeConfirmationDialogEdit()" (onSubmit)="updateData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+  [(tuiDialog)]="isOpenedDeleteDialog">
+  <delete-dialog title="Delete Restock Data"
+  [(isLoadingSubmit)]="isLoadingSubmit$"
+  [description]="`Are you sure want to delete this Restock Data???`"
+  (onClose)="closeDeleteDialog()"
+  (onSubmit)="deleteData()" />
+</ng-template>
+
+<ng-template [tuiDialogOptions]="{ size: 'l', dismissible: true, closable: true }"
+  [(tuiDialog)]="isOpenedDetailDialog">
+  <div class="text-base font-semibold mb-4">
+    Detail Restock Items from Restock on {{ selectedData$()?.restock_date | date : 'fullDate' }}
+  </div>
+
+  <div class="table-container">
+    <table tuiTable class="taiga-table mb-2">
+      <thead>
+        <tr tuiThGroup>
+          <th tuiTh>
+            Image
+          </th>
+          <th tuiTh>
+            Name
+          </th>
+          <th tuiTh>
+            Category
+          </th>
+          <th tuiTh>
+            Purchase Price
+          </th>
+          <th tuiTh>
+            Discount
+          </th>
+          <th tuiTh>
+            Qty
+          </th>
+          <th tuiTh>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody tuiTbody>
+        @for (item of selectedData$()!.edges.restock_items; track $index) {
+          <tr>
+            <td tuiTd>
+              <div tuiAvatar="@tui.image" appearance="primary-grayscale" size="m" [round]="false"
+              >
+                <img [src]="fileUrl + item.edges.product.image" />
+              </div>
+            </td>
+            <td tuiTd>
+              {{ item.edges.product.name }}
+            </td>
+            <td tuiTd>
+              {{ item.edges.product.edges.category.name }}
+            </td>
+            <td tuiTd>
+              {{ item.purchase_price | currency : "Rp. " : "symbol": "1.0-0" }}
+            </td>
+            <td tuiTd>
+              {{ item.discount ?? 0 }} %
+            </td>
+            <td tuiTd>
+              {{ item.quantity }}
+            </td>
+            <td tuiTd>
+              {{ item.sub_total | currency : "Rp. " : "symbol": "1.0-0" }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</ng-template>

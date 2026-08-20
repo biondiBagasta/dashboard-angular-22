@@ -1,0 +1,205 @@
+<tui-loader [loading]="isLoadingSubmit()" [size]="'m'"
+  [overlay]="true" [textContent]="'Submitting in Progress....'">
+  <div class="w-full flex flex-col gap-4">
+    <div class="font-bold text-2xl">
+      {{ title() }}
+    </div>
+
+    <form [formGroup]="formGroup()" class="w-full flex flex-col gap-4">
+      <select-field-component label="Supplier" placeholder="Select Supplier" [items]="supplierSelectList()"
+      [control]="formGroup().controls.supplier" />
+      <input-date-component label="Restock Date" placeholder="Restock Date" [control]="formGroup().controls.restock_date" />
+      <textarea-field-component label="Note" placeholder="Restock Note" [control]="formGroup().controls.note" />
+    </form>
+
+    <div class="flex flex-col gap-4">
+      <div class="text-base font-semibold">
+        Select Product to Restock
+      </div>
+      <div class="w-full">
+        <input-search-component label="Search Product" placeholder="Press Enter to Search"
+        [control]="searchControl" (onEnter)="search()" />
+      </div>
+      <tui-loader [loading]="isLoadingSearchProduct$()" [size]="'m'"
+      [overlay]="true" [textContent]="'Loading Product Data...'">
+        <div class="w-full overflow-x-auto overflow-y-hidden">
+          <table tuiTable class="mb-2 min-w-full">
+            <thead>
+              <tr tuiThGroup>
+                <th tuiTh>
+                  Selected
+                </th>
+                <th tuiTh>
+                  Image
+                </th>
+                <th tuiTh>
+                  Code
+                </th>
+                <th tuiTh>
+                  Name
+                </th>
+                <th tuiTh>
+                  Category
+                </th>
+                <th tuiTh>
+                  Purchase Price
+                </th>
+                <th tuiTh>
+                  Stock
+                </th>
+              </tr>
+            </thead>
+            <tbody tuiTbody>
+              @for (item of paginationProductData$()?.data; track $index) {
+                <tr>
+                  <td tuiTd (click)="selectProductItem(item)">
+                    <input tuiCheckbox type="checkbox" size="m" [checked]="checkIfProductSelected(item.id)" />
+                  </td>
+                  <td tuiTd>
+                    <div tuiAvatar="@tui.image" appearance="primary-grayscale" size="m" [round]="false"
+                    >
+                      <img [src]="fileUrl + item.image" />
+                    </div>
+                  </td>
+                  <td tuiTd>
+                    {{ item.code }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.name }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.edges.category.name }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.purchase_price  | currency : "Rp. " : "symbol": "1.0-0" }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.stock ?? 0 }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </tui-loader>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <div class="text-base font-semibold">
+        Selected Restock item
+      </div>
+      <div class="w-full overflow-x-auto overflow-y-hidden">
+        <table tuiTable class="mb-2 min-w-250">
+          <thead>
+            <tr tuiThGroup>
+              <th tuiTh>Image</th>
+              <th tuiTh>Name</th>
+              <th tuiTh>Category</th>
+              <th tuiTh>Purchase Price</th>
+              <th tuiTh>Qty</th>
+              <th tuiTh>Discount</th>
+              <th tuiTh>Subtotal</th>
+            </tr>
+          </thead>
+
+          <tbody tuiTbody>
+            @for (item of selectedItemList(); track $index; let i = $index) {
+              <tr>
+                <td tuiTd>
+                  <div
+                    tuiAvatar="@tui.image"
+                    appearance="primary-grayscale"
+                    size="m"
+                    [round]="false"
+                  >
+                    <img [src]="fileUrl + item.product.image" />
+                  </div>
+                </td>
+
+                <td tuiTd>
+                  {{ item.product.name }}
+                </td>
+
+                <td tuiTd>
+                  {{ item.product.edges.category.name }}
+                </td>
+
+                <td tuiTd>
+                  <tui-textfield>
+                    <input
+                      placeholder="Purchase Price"
+                      tuiInput
+                      [ngModel]="item.purchase_price"
+                      (ngModelChange)="updatePurchasePrice(i, $event)"
+                      [maskito]="maskitoCurrency"
+                    />
+                  </tui-textfield>
+                </td>
+
+                <td tuiTd>
+                  <div class="flex flex-row gap-2 items-center">
+                    <button
+                      tuiIconButton
+                      size="s"
+                      iconStart="@tui.minus"
+                      appearance="negative"
+                      (click)="decrementQty(i)"
+                    ></button>
+
+                    <div class="font-semibold">
+                      {{ item.quantity }}
+                    </div>
+
+                    <button
+                      tuiIconButton
+                      size="s"
+                      iconStart="@tui.plus"
+                      appearance="positive"
+                      (click)="incrementQty(i)"
+                    ></button>
+                  </div>
+                </td>
+
+                <td tuiTd>
+                  <tui-textfield>
+                    <input
+                      placeholder="Discount"
+                      tuiInput
+                      [ngModel]="item.discount"
+                      (ngModelChange)="updateDiscount(i, $event)"
+                      [maskito]="maskitoPercents"
+                    />
+                  </tui-textfield>
+                </td>
+
+                <td tuiTd>
+                  <div class="text-base font-semibold">
+                    {{ item.sub_total }}
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (selectedItemList().length == 0) {
+        <div tuiNotification size="l">
+          No Selected Items
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-row justify-content-end gap-2">
+      <button tuiButton class="mr-2" type="submit" size="m"
+      iconStart="@tui.check"
+      (click)="onSubmit.emit()" [disabled]="!formGroup().valid || selectedItemList().length == 0">
+        Submit
+      </button>
+      <button tuiButton type="button" size="m" iconStart="@tui.x" appearance="warning"
+      (click)="onClose.emit()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</tui-loader>
+

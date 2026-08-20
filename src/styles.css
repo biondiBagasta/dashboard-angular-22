@@ -3,15 +3,3 @@
 @import 'tailwindcss';
 @import './dashboard.css';
 @import 'quill/dist/quill.snow.css';
-
-.taiga-table {
-  inline-size: 100%;
-  overflow-x: auto;
-}
-
-.table-container {
-  -webkit-overflow-scrolling: touch;
-  overflow: auto;
-  overflow-y: hidden;
-  max-width: 100%;
-}
