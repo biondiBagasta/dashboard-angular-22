@@ -11,7 +11,7 @@ import { SocketIoConfig, provideSocketIo } from 'ngx-socket-io'
 
 registerLocaleData(localeId, 'id');
 
-const baseUrlSocket = "http://localhost:3000"
+const baseUrlSocket = "http://localhost:8081"
 
 const socketConfig: SocketIoConfig = { url: baseUrlSocket, options: {} };
 

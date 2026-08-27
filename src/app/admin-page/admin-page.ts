@@ -66,7 +66,13 @@ export class AdminPage {
         this.localStorageService.saveDataToStorage("backoffice-jwt", data.password);
       }),
       catchError((e: HttpErrorResponse) => {
-        return this.utilsService.showErrorHttpMessageAlert(e);
+        return this.utilsService.showErrorHttpMessageAlert(e).pipe(
+          tap((_) => {
+            if(e.status == 403) {
+              this.router.navigate(["/login"]);
+            }
+          })
+        );
       })
     ).subscribe();
 

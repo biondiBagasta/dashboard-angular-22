@@ -4,7 +4,7 @@ import { maskitoTransform } from "@maskito/core";
 import { maskitoNumber } from "@maskito/kit";
 import { TUI_VALIDATION_ERRORS } from "@taiga-ui/core";
 
-export const baseUrl = "http://localhost:3000/api";
+export const baseUrl = "http://localhost:8081/api";
 
 export const formValidationErrorProvider: Provider =  {
   provide: TUI_VALIDATION_ERRORS,
