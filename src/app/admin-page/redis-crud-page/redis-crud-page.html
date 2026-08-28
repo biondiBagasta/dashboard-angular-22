@@ -1,1 +1,103 @@
-<p>redis-crud-page works!</p>
+<div class="section">
+  <page-title-component title="Redis Crud" previousTitle="Dashboard" />
+
+  <div tuiCardLarge tuiAppearance="outline-grayscale">
+    <div class="text-base font-semibold">
+      Redis Crud
+    </div>
+    <div class="flex flex-row justify-between items-center gap-4">
+      <button tuiButton size="m" iconStart="@tui.plus" appearance="primary-grayscale"
+      (click)="openCreateDialog()">
+        Add
+      </button>
+
+      <div class="w-full md:w-75">
+        <input-search-component label="Search Data" placeholder="Press Enter to Search"
+        [control]="searchControl"
+        (onEnter)="searchMany()"  />
+      </div>
+    </div>
+
+    <div class="w-full">
+      <tui-loader [loading]="isLoadingTable$()" [size]="'m'" [overlay]="true"
+      [textContent]="'Loading the Data...'">
+        <div class="w-full overflow-x-auto overflow-y-hidden">
+          <table tuiTable class="mb-2 min-w-full">
+            <thead>
+              <tr tuiThGroup>
+                <th tuiTh>
+                  ID
+                </th>
+                <th tuiTh>
+                  Name
+                </th>
+                <th tuiTh>
+                  Price
+                </th>
+                <th tuiTh>Action</th>
+              </tr>
+            </thead>
+            <tbody tuiTbody>
+              @for (item of dataList$(); track $index) {
+                <tr>
+                  <td tuiTd>
+                    {{ item.id }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.name }}
+                  </td>
+                  <td tuiTd>
+                    {{ item.price }}
+                  </td>
+                  <td tuiTd>
+                    <div class="flex flex-col md:flex-row gap-2">
+                      <button tuiIconButton type="button"
+                      iconStart="@tui.square-pen" appearance="info"
+                      (click)="openEditDialog(item)"
+                        size="s">
+                      </button>
+                      <button tuiIconButton
+                        type="button" iconStart="@tui.trash"
+                        size="s" appearance="negative"
+                        (click)="openDeleteDialog(item)">
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if(dataList$().length == 0) {
+          <div tuiNotification size="l">
+            No Item Data
+          </div>
+        }
+      </tui-loader>
+    </div>
+  </div>
+
+  <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+    [(tuiDialog)]="isOpenedCreateDialog">
+    <app-redis-crud-form (onClose)="closeCreateDialog()" [formGroup]="redisCrudForm"
+    [isLoadingSubmit]="isLoadingSubmit$()" title="Create Redis Product" (onSubmit)="createData()" />
+  </ng-template>
+
+
+  <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+    [(tuiDialog)]="isOpenedEditDialog">
+    <app-redis-crud-form (onClose)="closeEditDialog()" [formGroup]="redisCrudForm"
+    [isLoadingSubmit]="isLoadingSubmit$()" title="Update Redis Product" (onSubmit)="updateData()" />
+  </ng-template>
+
+  <ng-template [tuiDialogOptions]="{ size: 'l', dismissible: false, closable: false }"
+    [(tuiDialog)]="isOpenedDeleteDialog">
+    <delete-dialog title="Delete Redis Product"
+    [(isLoadingSubmit)]="isLoadingSubmit$"
+    [description]="`Are you sure want to delete this <b>${selectedData$()?.name!}</b> Redis Product Data???`"
+    (onClose)="closeDeleteDialog()"
+    (onSubmit)="deleteData()" />
+  </ng-template>
+
+</div>

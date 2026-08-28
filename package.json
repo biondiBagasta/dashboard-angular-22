@@ -33,6 +33,7 @@
     "highcharts": "^13.0.1",
     "highcharts-angular": "^5.4.1",
     "less": "^4.8.1",
+    "nanoid": "^6.0.1",
     "ngx-quill": "^31.0.1",
     "ngx-socket-io": "^4.11.1",
     "quill": "^2.0.3",

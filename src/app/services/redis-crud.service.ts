@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RedisProduct } from '../interfaces/redis-product';
+import { RedisProductData } from '../interfaces/redis-product';
 import { baseUrl } from '../../utils/utils';
 import { ResponseMessage } from '../interfaces/response-message';
 
@@ -9,19 +9,19 @@ import { ResponseMessage } from '../interfaces/response-message';
 export class RedisCrudService {
   http = inject(HttpClient)
 
-  findMany(): Observable<RedisProduct[]> {
-    return this.http.get<RedisProduct[]>(`${baseUrl}/redis-crud/many`)
+  searchMany(term: string): Observable<RedisProductData[]> {
+    return this.http.post<RedisProductData[]>(`${baseUrl}/redis-crud/many`, {term})
   }
 
-  create(body: RedisProduct): Observable<ResponseMessage> {
+  create(body: RedisProductData): Observable<ResponseMessage> {
     return this.http.post<ResponseMessage>(`${baseUrl}/redis-crud/create`, body);
   }
 
-  update(id: number, body: RedisProduct): Observable<ResponseMessage> {
+  update(id: string, body: RedisProductData): Observable<ResponseMessage> {
     return this.http.put<ResponseMessage>(`${baseUrl}/redis-crud/update/${id}`, body)
   }
 
-  delete(id: number): Observable<ResponseMessage> {
+  delete(id: string): Observable<ResponseMessage> {
     return this.http.delete<ResponseMessage>(`${baseUrl}/redis-crud/delete/${id}`)
   }
 }

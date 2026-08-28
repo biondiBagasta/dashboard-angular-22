@@ -57,6 +57,10 @@ export const routes: Routes = [
         loadComponent: () => import("./admin-page/order-create-page/order-create-page").then((m) => m.OrderCreatePage)
       },
       {
+        path: "redis-crud",
+        loadComponent: () => import("./admin-page/redis-crud-page/redis-crud-page").then((m) => m.RedisCrudPage)
+      },
+      {
         path: "",
         redirectTo: "dashboard",
         pathMatch: "full"
